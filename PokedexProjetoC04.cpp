@@ -7,6 +7,7 @@
 // Túlio César Alves Junho           - GES - 741
 // João Vitor Lima da Silveira       - GES - 500
 // Vitoria Cássia Bernardo Rodrigues - GEC - 2094
+#define INF 99999
 
 #include <iostream> 
 #include <locale>
@@ -70,7 +71,16 @@ void CadastrarCidade(list<Cidade>& cidades, int& vertices)
 	nova.codigo = vertices + 1;
 	
 	cout << "Essa cidade tem um Centro Pokémon? (1 - Sim / 0 - Não): " << endl;
-	cin >> nova.centro;
+
+    int temCentro;
+    cin >> temCentro;
+
+    while(temCentro != 1 && temCentro != 0){
+        cout << "Digite um valor válido por favor!" << endl;
+        cin >> temCentro;
+    }
+
+    nova.centro = temCentro; // int 0/1 -> bool false/true, conversão automática e segura
 	
 	cidades.push_back(nova);
 	
@@ -78,7 +88,6 @@ void CadastrarCidade(list<Cidade>& cidades, int& vertices)
 	
 	cout << "Cidade cadastrada!\n"; 
 	cout << "Código da cidade: " << nova.codigo << endl << endl;
-	
 }
 
 void CadastrarEstrada(list<Aresta> grafo[], int vertices)
@@ -166,6 +175,107 @@ void ListarEstradas(list<Cidade> cidades, list<Aresta> grafo[])
     cout << endl;
 }
 
+int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades, int origemCodigo)
+{
+    string nomeCidade[100];
+    bool temCentro[100];
+
+    // Monta arrays auxiliares indexados por codigo-1, percorrendo a list uma vez
+    list<Cidade>::iterator itc;
+    for(itc = cidades.begin(); itc != cidades.end(); itc++)
+    {
+        int idx = itc->codigo - 1;
+        nomeCidade[idx] = itc->nome;
+        temCentro[idx] = itc->centro;
+    }
+
+    int origem = origemCodigo - 1; // converte código digitado -> índice
+
+    if(origem < 0 || origem >= totalcidades)
+    {
+        cout << "Código de cidade inválido!" << endl;
+        return -1;
+    }
+
+    bool visitado[100];
+    int pai[100];
+    int distancia[100];
+
+    list<Aresta>::iterator it;
+
+    for(int i = 0; i < totalcidades; i++){
+        visitado[i] = false;
+        pai[i] = -1;
+        distancia[i] = INF;
+    }
+    distancia[origem] = 0;
+
+    while(true){
+
+        int atual = -1;
+        int menor = INF;
+
+        for(int i = 0; i < totalcidades; i++){
+            if(!visitado[i] && distancia[i] < menor){
+                menor = distancia[i];
+                atual = i;
+            }
+        }
+
+        if(atual == -1)
+            break;
+
+        visitado[atual] = true;
+
+        for(it = grafo[atual].begin(); it != grafo[atual].end(); ++it)
+        {
+            int destino = it->destino;
+            int peso = it->peso;
+
+            if(distancia[atual] + peso < distancia[destino]){
+                distancia[destino] = distancia[atual] + peso;
+                pai[destino] = atual;
+            }
+        }
+    }
+
+    int melhorcidade = -1;
+    int menordistancia = INF;
+
+    for(int i = 0; i < totalcidades; i++){
+        if(temCentro[i] && distancia[i] < menordistancia)
+        {
+            menordistancia = distancia[i];
+            melhorcidade = i;
+        }
+    }
+
+    if(melhorcidade == -1){
+        cout << "Nenhum centro Pokemon encontrado" << endl;
+        return -1;
+    }
+
+    cout << "Centro Pokemon encontrado na cidade " << nomeCidade[melhorcidade] << endl;
+    cout << "Distancia total: " << menordistancia << endl;
+
+    int caminho[100];
+    int tam = 0;
+    for(int v = melhorcidade; v != -1; v = pai[v]){
+        caminho[tam++] = v;
+    }
+
+    cout << "Rota: ";
+    for(int i = tam - 1; i >= 0; i--){
+        cout << nomeCidade[caminho[i]];
+
+        if(i > 0)
+            cout << " -> ";
+    }
+    cout << endl;
+
+    return melhorcidade;
+}
+
 int main(){
 
 	setlocale(LC_ALL, "Portuguese_Brazil");  
@@ -215,7 +325,10 @@ int main(){
             break;
         
         case 3:                 //Buscar centro Pokemon mais proximo
-            onConstruct();
+            int localizacao;
+            cout << "Qual cidade vc esta no momento?(Digite o codigo por favor" << endl;
+            cin >> localizacao;
+            CentroProximo(grafo, cidades, vertices,localizacao); //aqui chat
             break;
         
         case 4:                 //Cadastrar pokemon
