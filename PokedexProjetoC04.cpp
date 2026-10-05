@@ -13,6 +13,7 @@
 #include <locale>
 #include <cstdlib>
 #include <list>
+#include <string>
 using namespace std;
 
 struct Cidade
@@ -26,10 +27,59 @@ struct Aresta
 {
 	int origem, destino, peso;
 };
+
+void limparCin()
+{
+    cin.clear();
+    cin.ignore(100, '\n');
+}
+
+int verificacao(string decisao)
+{
+	int opcao = 0;
+	getline(cin >> ws, decisao);
+	
+    
+    bool valido = true;
+    
+    if(decisao.empty())
+    {
+        valido = false;
+    }
+
+    for(int i = 0; i < decisao.length(); i++)
+    {
+        if(decisao[i] < '0' || decisao[i] > '9')
+        {
+            valido = false;
+        }
+    }
+
+    if(valido)
+    {
+        opcao = 0;
+
+        for(int i = 0; i < decisao.length(); i++)
+        {
+            opcao = opcao * 10 + (decisao[i] - '0');
+        }
+
+        if(opcao > 11)
+        {
+            valido = false;
+        }
+    }
+	
+	if(!valido)
+		return -1;
+	
+	return opcao;
+	
+}
   
 
 int menu(){                 //Exibe o menu da pokedex
-    int decisao = -1;
+    string decisao;
 
     cout << "  ====================================================================================================================" << endl;
     cout << "                                                     POKEDEX                " << endl;
@@ -52,9 +102,7 @@ int menu(){                 //Exibe o menu da pokedex
 	cout << "[0] Sair do Programa. " << endl;
     cout << endl;
 
-    cin >> decisao;
-
-    return decisao;
+    return verificacao(decisao); 
 }
 
 void onConstruct(){
@@ -81,18 +129,23 @@ void CadastrarCidade(list<Cidade>& cidades, int& vertices)
 
     nova.codigo = vertices + 1;
 
-    cout << "Essa cidade tem um Centro Pok�mon? (1 - Sim / 0 - N�o): " << endl;
 
-    int temCentro;
-    cin >> temCentro;
+    string respostaCentro;
 
-    while(temCentro != 1 && temCentro != 0)
-    {
-        cout << "Digite um valor v�lido por favor!" << endl;
-        cin >> temCentro;
-    }
+	cout << "Essa cidade tem um Centro Pok�mon? (1 - Sim / 0 - N�o): " << endl;
+	cin >> respostaCentro;
 
-    nova.centro = temCentro;
+	while(respostaCentro != "0" && respostaCentro != "1")
+	{
+    	cout << "Digite apenas 1 ou 0: " << endl;
+    	cin >> respostaCentro;
+	}
+
+	if(respostaCentro == "1")
+		nova.centro = true;
+	
+	else
+		nova.centro = false;
 
     cidades.push_back(nova);
 
@@ -115,8 +168,9 @@ void CadastrarEstrada(list<Aresta> grafo[], int vertices)
     cout << "Insira o c�digo da cidade de origem: ";
     cin >> origem;
 
-    while(origem < 1 || origem > vertices)
+    while(cin.fail() || origem < 1 || origem > vertices)
     {
+        limparCin();
         cout << "C�digo de cidade inexistente. Tente novamente: " << endl;
         cin >> origem;
     }
@@ -124,8 +178,10 @@ void CadastrarEstrada(list<Aresta> grafo[], int vertices)
     cout << "Insira o c�digo da cidade de destino: ";
     cin >> destino;
 
-    while(destino < 1 || destino > vertices || destino == origem)
+    while(cin.fail() || destino < 1 || destino > vertices || destino == origem)
     {
+        limparCin();
+
         if(destino == origem)
         {
             cout << "A cidade de destino deve ser diferente da origem. Tente novamente: ";
@@ -141,8 +197,9 @@ void CadastrarEstrada(list<Aresta> grafo[], int vertices)
     cout << "Dist�ncia da estrada: ";
     cin >> peso;
 
-    while(peso <= 0)
+    while(cin.fail() || peso <= 0)
     {
+        limparCin();
         cout << "Insira a dist�ncia correta da estrada: ";
         cin >> peso;
     }
@@ -366,6 +423,14 @@ int main(){
             int localizacao;
             cout << "Qual cidade voc� est� no momento? (Digite o c�digo, por favor): " << endl;
             cin >> localizacao;
+
+            while(cin.fail())
+            {
+                limparCin();
+                cout << "Entrada inv�lida. Digite o c�digo da cidade novamente: " << endl;
+                cin >> localizacao;
+            }
+
             CentroProximo(grafo, cidades, vertices,localizacao); //aqui chat
             break;
         
