@@ -110,7 +110,13 @@ void onConstruct(){
 }
 
 void CadastrarCidade(list<Cidade>& cidades, int& vertices)
-{
+{		
+	if(vertices >= 100)
+    {
+        cout << "Limite de cidades atingido!\n" << endl;
+        return;
+    }
+    
     Cidade nova;
 
     cout << "Insira o nome da cidade a ser cadastrada: " << endl;
@@ -162,6 +168,7 @@ void CadastrarEstrada(list<Aresta> grafo[], int vertices)
 		cout << "N�o h� cidades o suficiente para uma estrada ser criada!" << endl;
 		return;
 	}
+
 	
     int origem, destino, peso;
 
@@ -215,6 +222,7 @@ void CadastrarEstrada(list<Aresta> grafo[], int vertices)
 
 void ListarCidades(list<Cidade> cidades)
 {
+	
     // pra percorrer a lista de cidades no for
     list<Cidade>::iterator cidade;
 
@@ -376,21 +384,8 @@ int main(){
 	setlocale(LC_ALL, "Portuguese_Brazil");  
 	
     //Imagem pikachu
+    system("curl -s https://raw.githubusercontent.com/shinya/pokemon-terminal-art/refs/heads/main/fullcolor/diamond/025.txt");
     
-    #ifdef _WIN32
-    // Ativa cores ANSI no Windows Terminal
-    system("chcp 65001 > nul");
-    #endif
-
-    // Pikachu #025 - arte colorida do projeto Pokemon Terminal Art
-    const char* comando =
-        "curl -s "
-        "https://raw.githubusercontent.com/shinya/pokemon-terminal-art/main/"
-        "fullcolor/diamond/025.txt";
-
-    system(comando);
-    cout << "\033[0m" << endl;
-
     //Come�o do c�digo
     
     list<Cidade> cidades;
@@ -431,7 +426,7 @@ int main(){
                 cin >> localizacao;
             }
 
-            CentroProximo(grafo, cidades, vertices,localizacao); //aqui chat
+            CentroProximo(grafo, cidades, vertices,localizacao); 
             break;
         
         case 4:                 //Cadastrar pokemon
