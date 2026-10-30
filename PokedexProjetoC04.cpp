@@ -2,11 +2,11 @@
 //                Projeto de Pokedex
 //=====================================================
 // Integrantes:
-// Kau� Aparecido Silva Morais       - GES - 756
+// Kauã Aparecido Silva Morais       - GES - 756
 // Ana Clara Oliveira e Silva        - GES - 867
-// T�lio C�sar Alves Junho           - GES - 741
-// Jo�o Vitor Lima da Silveira       - GES - 500
-// Vitoria C�ssia Bernardo Rodrigues - GEC - 2094
+// Túlio César Alves Junho           - GES - 741
+// João Vitor Lima da Silveira       - GES - 500
+// Vitoria Cássia Bernardo Rodrigues - GEC - 2094
 #define INF 99999
 
 #include <iostream> 
@@ -84,19 +84,19 @@ int menu(){                 //Exibe o menu da pokedex
     cout << "  ====================================================================================================================" << endl;
     cout << "                                                     POKEDEX                " << endl;
     cout << "  ====================================================================================================================" << endl;
-    cout << "\n# Ol�, Jovem Treinador! Essa � a Pok�dex, sua maior aliada em sua jornada de se tornar o melhor treinador dos Pok�mons!" << endl;
+    cout << "\n# Olá, Jovem Treinador! Essa é a Pokedex, sua maior aliada em sua jornada de se tornar o melhor treinador dos Pokemons!" << endl;
     cout << endl;
-    cout << "Fa�a sua escolha: " << endl;
+    cout << "Faça sua escolha: " << endl;
     cout << endl;
     cout << "[1] Cadastrar Cidade. " << endl;
 	cout << "[2] Cadastrar Estrada. " << endl;
-	cout << "[3] Buscar Centro Pok�mon mais pr�ximo. " << endl;
-	cout << "[4] Cadastrar Pok�mon. " << endl;
-	cout << "[5] Remover Pok�mon. " << endl;
-	cout << "[6] Listar Pok�mons (ordem alfab�tica por nome). " << endl;
-	cout << "[7] Listar Pok�mons (ordem alfab�tica por tipo). " << endl;
-	cout << "[8] Contar Pok�mons de cada Tipo. " << endl;
-	cout << "[9] Encontrar Pok�mons pr�ximos. " << endl;
+	cout << "[3] Buscar Centro Pokemon mais proximo. " << endl;
+	cout << "[4] Cadastrar Pokemon. " << endl;
+	cout << "[5] Remover Pokemon. " << endl;
+	cout << "[6] Listar Pokemons (ordem alfabetica por nome). " << endl;
+	cout << "[7] Listar Pokemons (ordem alfabetica por tipo). " << endl;
+	cout << "[8] Contar Pokemons de cada Tipo. " << endl;
+	cout << "[9] Encontrar Pokemons proximos. " << endl;
 	cout << "[10] Listar Cidades. " << endl;
 	cout << "[11] Listar Estradas. " << endl;
 	cout << "[0] Sair do Programa. " << endl;
@@ -106,7 +106,7 @@ int menu(){                 //Exibe o menu da pokedex
 }
 
 void onConstruct(){
-    cout << "Funcionalidade em Constru��o... \n" << endl;
+    cout << "Funcionalidade em Construçao... \n" << endl;
 }
 
 void CadastrarCidade(list<Cidade>& cidades, int& vertices)
@@ -126,7 +126,7 @@ void CadastrarCidade(list<Cidade>& cidades, int& vertices)
     {
         while(it->nome == nova.nome)
         {
-            cout << "Essa cidade j� foi cadastrada. Insira outro nome: " << endl;
+            cout << "Essa cidade ja foi cadastrada. Insira outro nome: " << endl;
             getline(cin >> ws, nova.nome);
 
             it = cidades.begin();
@@ -138,7 +138,7 @@ void CadastrarCidade(list<Cidade>& cidades, int& vertices)
 
     string respostaCentro;
 
-	cout << "Essa cidade tem um Centro Pok�mon? (1 - Sim / 0 - N�o): " << endl;
+	cout << "Essa cidade tem um Centro Pokemon? (1 - Sim / 0 - N�o): " << endl;
 	cin >> respostaCentro;
 
 	while(respostaCentro != "0" && respostaCentro != "1")
@@ -158,31 +158,31 @@ void CadastrarCidade(list<Cidade>& cidades, int& vertices)
     vertices++;
 
     cout << "Cidade cadastrada!\n";
-    cout << "C�digo da cidade: " << nova.codigo << endl << endl;
+    cout << "Codigo da cidade: " << nova.codigo << endl << endl;
 }
 
 void CadastrarEstrada(list<Aresta> grafo[], int vertices)
 {
 	if(vertices <= 1)
 	{
-		cout << "N�o h� cidades o suficiente para uma estrada ser criada!" << endl;
+		cout << "Nao ha cidades o suficiente para uma estrada ser criada!" << endl;
 		return;
 	}
 
 	
     int origem, destino, peso;
 
-    cout << "Insira o c�digo da cidade de origem: ";
+    cout << "Insira o codigo da cidade de origem: ";
     cin >> origem;
 
     while(cin.fail() || origem < 1 || origem > vertices)
     {
         limparCin();
-        cout << "C�digo de cidade inexistente. Tente novamente: " << endl;
+        cout << "Codigo de cidade inexistente. Tente novamente: " << endl;
         cin >> origem;
     }
 
-    cout << "Insira o c�digo da cidade de destino: ";
+    cout << "Insira o codigo da cidade de destino: ";
     cin >> destino;
 
     while(cin.fail() || destino < 1 || destino > vertices || destino == origem)
@@ -195,19 +195,19 @@ void CadastrarEstrada(list<Aresta> grafo[], int vertices)
         }
         else
         {
-            cout << "C�digo de cidade inexistente. Tente novamente: ";
+            cout << "Codigo de cidade inexistente. Tente novamente: ";
         }
 
         cin >> destino;
     }
 
-    cout << "Dist�ncia da estrada: ";
+    cout << "Distancia da estrada: ";
     cin >> peso;
 
     while(cin.fail() || peso <= 0)
     {
         limparCin();
-        cout << "Insira a dist�ncia correta da estrada: ";
+        cout << "Insira a distancia correta da estrada: ";
         cin >> peso;
     }
 
@@ -231,13 +231,13 @@ void ListarCidades(list<Cidade> cidades)
     for(cidade = cidades.begin(); cidade != cidades.end(); cidade++)
     {
 	
-		cout << "Nome:" << cidade -> nome << " | C�digo:" << cidade -> codigo; 
-		cout << " | Centro Pok�mon:";
+		cout << "Nome:" << cidade -> nome << " | Codigo:" << cidade -> codigo; 
+		cout << " | Centro Pokemon:";
 
         if(cidade -> centro)
             cout << "Sim";
         else
-            cout << "N�o";
+            cout << "Nao";
 
         cout << endl;
     }
@@ -296,7 +296,7 @@ int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades,
 
     if(origem < 0 || origem >= totalcidades)
     {
-        cout << "C�digo de cidade inv�lido!" << endl;
+        cout << "Codigo de cidade invalido!" << endl;
         return -1;
     }
 
@@ -354,12 +354,12 @@ int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades,
     }
 
     if(melhorcidade == -1){
-        cout << "Nenhum centro Pok�mon encontrado" << endl;
+        cout << "Nenhum centro Pokemon encontrado" << endl;
         return -1;
     }
 
-    cout << "Centro Pok�mon encontrado na cidade " << nomeCidade[melhorcidade] << endl;
-    cout << "Dist�ncia total: " << menordistancia << endl;
+    cout << "Centro Pokemon encontrado na cidade " << nomeCidade[melhorcidade] << endl;
+    cout << "Distancia total: " << menordistancia << endl;
 
     int caminho[100];
     int tam = 0;
@@ -416,13 +416,13 @@ int main(){
         
         case 3:                 //Buscar centro Pokemon mais proximo
             int localizacao;
-            cout << "Qual cidade voc� est� no momento? (Digite o c�digo, por favor): " << endl;
+            cout << "Qual cidade voce esta no momento? (Digite o codigo, por favor): " << endl;
             cin >> localizacao;
 
             while(cin.fail())
             {
                 limparCin();
-                cout << "Entrada inv�lida. Digite o c�digo da cidade novamente: " << endl;
+                cout << "Entrada invalida. Digite o codigo da cidade novamente: " << endl;
                 cin >> localizacao;
             }
 
