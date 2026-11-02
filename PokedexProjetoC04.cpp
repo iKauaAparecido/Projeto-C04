@@ -14,15 +14,13 @@
 #include <string>
 using namespace std;
 
-struct Cidade
-{
+struct Cidade{
 	string nome;
 	int codigo;
 	bool centro;	
 };
   
-struct Aresta
-{
+struct Aresta{
 	int origem, destino, peso;
 };
 
@@ -38,19 +36,21 @@ struct node{
     struct node * right;
 };
 
+//Limpa o estado de erro do cin, sem travar quando a entrada for quando colocar letras ou algum outro tipo de caractere
 void limparCin()
 {
     cin.clear();
     cin.ignore(100, '\n');
 }
 
-int verificacao(string decisao)
-{
+//Faz a validacao de entrada do usuario, evitando que uma entrada errada acabe quebrando o programa
+
+int verificacao(string decisao){
 	int opcao = 0;
+    bool valido = true;
 	getline(cin >> ws, decisao);
     
-    bool valido = true;
-    
+    //Verifica se está com entrada vazia
     if(decisao.empty()){
         valido = false;
     }
@@ -62,8 +62,6 @@ int verificacao(string decisao)
     }
 
     if(valido){
-        opcao = 0;
-
         for(int i = 0; i < decisao.length(); i++){
             opcao = opcao * 10 + (decisao[i] - '0');
         }
@@ -79,6 +77,8 @@ int verificacao(string decisao)
 	return opcao;
 	
 }
+
+//insert, find_less_save_right e remove sao as funçoes dada pelo professor Jonas que a gente usou para adptar no projeto
 
 void insert(node * & current, pokemons data){ 
   if(current == NULL){ 
@@ -128,7 +128,8 @@ bool remove(node * & current, string data){
   }
 }
 
-int menu(){                 //Exibe o menu da pokedex
+//Exibe o menu da pokedex
+int menu(){                 
     string decisao;
 
     cout << "  ====================================================================================================================" << endl;
@@ -159,8 +160,7 @@ void onConstruct(){
     cout << "Funcionalidade em Construçao... \n" << endl;
 }
 
-void CadastrarCidade(list<Cidade>& cidades, int& vertices)
-{		
+void CadastrarCidade(list<Cidade>& cidades, int& vertices){		
 	if(vertices >= 100)
     {
         cout << "Limite de cidades atingido!\n" << endl;
@@ -185,21 +185,18 @@ void CadastrarCidade(list<Cidade>& cidades, int& vertices)
 
     nova.codigo = vertices + 1;
 
-
     string respostaCentro;
 
-	cout << "Essa cidade tem um Centro Pokemon? (1 - Sim / 0 - N�o): " << endl;
+	cout << "Essa cidade tem um Centro Pokemon? (1 - Sim / 0 - Nao): " << endl;
 	cin >> respostaCentro;
 
-	while(respostaCentro != "0" && respostaCentro != "1")
-	{
+	while(respostaCentro != "0" && respostaCentro != "1"){
     	cout << "Digite apenas 1 ou 0: " << endl;
     	cin >> respostaCentro;
 	}
 
 	if(respostaCentro == "1")
 		nova.centro = true;
-	
 	else
 		nova.centro = false;
 
@@ -217,7 +214,6 @@ void CadastrarEstrada(list<Aresta> grafo[], int vertices)
 		cout << "Nao ha cidades o suficiente para uma estrada ser criada!" << endl;
 		return;
 	}
-
 	
     int origem, destino, peso;
 
@@ -236,12 +232,10 @@ void CadastrarEstrada(list<Aresta> grafo[], int vertices)
     while(cin.fail() || destino < 1 || destino > vertices || destino == origem){
         limparCin();
 
-        if(destino == origem)
-        {
+        if(destino == origem){
             cout << "A cidade de destino deve ser diferente da origem. Tente novamente: ";
         }
-        else
-        {
+        else{
             cout << "Codigo de cidade inexistente. Tente novamente: ";
         }
 
@@ -266,17 +260,12 @@ void CadastrarEstrada(list<Aresta> grafo[], int vertices)
     cout << "Estrada cadastrada!\n" << endl;
 }
 
-void ListarCidades(list<Cidade> cidades)
-{
-	
-    // pra percorrer a lista de cidades no for
-    list<Cidade>::iterator cidade;
+void ListarCidades(list<Cidade> cidades){
+    list<Cidade>::iterator cidade; // pra percorrer a lista de cidades no for
 
     cout << "\n========== CIDADES ==========\n";
 
-    for(cidade = cidades.begin(); cidade != cidades.end(); cidade++)
-    {
-	
+    for(cidade = cidades.begin(); cidade != cidades.end(); cidade++){
 		cout << "Nome:" << cidade -> nome << " | Codigo:" << cidade -> codigo; 
 		cout << " | Centro Pokemon:";
 
@@ -291,10 +280,8 @@ void ListarCidades(list<Cidade> cidades)
     cout << endl;
 }
 
-void ListarEstradas(list<Cidade> cidades, list<Aresta> grafo[])
-{
+void ListarEstradas(list<Cidade> cidades, list<Aresta> grafo[]){
     list<Cidade>::iterator cidade; // pra percorrer a lista de cidades no primeiro for
-    
     list<Aresta>::iterator it; // pra percorrer a lista de estradas da cidade atual no segundo for 
 
     cout << "\n========== ESTRADAS ==========\n";
@@ -302,19 +289,19 @@ void ListarEstradas(list<Cidade> cidades, list<Aresta> grafo[])
     // percorre todas as cidades
     for(cidade = cidades.begin(); cidade != cidades.end(); cidade++)
     {
-        // pega o c�digo da cidade e diminui 1 pra usar como �ndice do grafo (j� que vetor come�a em 0)
+        // pega o codigo da cidade e diminui 1 pra usar como indice do grafo (ja que vetor começa em 0)
         int i = cidade -> codigo - 1;
 
         // percorre as estradas que saem da cidade atual
         for(it = grafo[i].begin(); it != grafo[i].end(); it++)
         {
-            // pra percorrer a lista de cidades e ver qual � o destino
+            // pra percorrer a lista de cidades e ver qual eh o destino
             list<Cidade>::iterator destino;
 
             // percorre todas as cidades procurando o destino da estrada
             for(destino = cidades.begin(); destino != cidades.end(); destino++)
             {
-                // ve se o c�digo da cidade de destino � igual ao destino da estrada
+                // ve se o codigo da cidade de destino eh igual ao destino da estrada
                 if(destino -> codigo == it -> destino + 1)
                     cout << cidade -> nome << " -> " << destino -> nome << " | Distancia: " << it -> peso << endl;
             }
@@ -324,6 +311,7 @@ void ListarEstradas(list<Cidade> cidades, list<Aresta> grafo[])
     cout << endl;
 }
 
+//Usamos o Dijkstra para calcular a menor distancia da cidade atual ate todas as outras, escolhemos a que tem centro poke mais proximo e imprimimos
 int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades, int origemCodigo){
     string nomeCidade[100];
     bool temCentro[100];
@@ -336,7 +324,7 @@ int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades,
         temCentro[idx] = itc->centro;
     }
 
-    int origem = origemCodigo - 1; // converte c�digo digitado -> �ndice
+    int origem = origemCodigo - 1; // converte codigo digitado -> indice
 
     if(origem < 0 || origem >= totalcidades){
         cout << "Codigo de cidade invalido!" << endl;
@@ -548,7 +536,7 @@ int main(){
             onConstruct();
             break;
         
-		case 9:                 //Encontrar pokes pr�ximos
+		case 9:                 //Encontrar pokes proximos
             onConstruct();
             break;
         
