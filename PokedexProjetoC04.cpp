@@ -488,7 +488,7 @@ void RemoverPokemon(node * & current){
 }
 
 int main(){    
-    //Come�o do c�digo
+    //Começo do codigo
     node * root = NULL;
     list<Cidade> cidades; 
     list<Aresta> grafo[100];
