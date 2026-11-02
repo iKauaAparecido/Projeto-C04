@@ -10,8 +10,6 @@
 #define INF 99999
 
 #include <iostream> 
-#include <locale>
-#include <cstdlib>
 #include <list>
 #include <string>
 using namespace std;
@@ -84,9 +82,9 @@ int menu(){                 //Exibe o menu da pokedex
     cout << "  ====================================================================================================================" << endl;
     cout << "                                                     POKEDEX                " << endl;
     cout << "  ====================================================================================================================" << endl;
-    cout << "\n# Olá, Jovem Treinador! Essa é a Pokedex, sua maior aliada em sua jornada de se tornar o melhor treinador dos Pokemons!" << endl;
+    cout << "\n Ola, Jovem Treinador! Essa eh a Pokedex, sua maior aliada em sua jornada de se tornar o melhor treinador dos Pokemons!" << endl;
     cout << endl;
-    cout << "Faça sua escolha: " << endl;
+    cout << "Faca sua escolha: " << endl;
     cout << endl;
     cout << "[1] Cadastrar Cidade. " << endl;
 	cout << "[2] Cadastrar Estrada. " << endl;
@@ -379,13 +377,7 @@ int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades,
     return melhorcidade;
 }
 
-int main(){
-
-	setlocale(LC_ALL, "Portuguese_Brazil");  
-	
-    //Imagem pikachu
-    system("curl -s https://raw.githubusercontent.com/shinya/pokemon-terminal-art/refs/heads/main/fullcolor/diamond/025.txt");
-    
+int main(){    
     //Come�o do c�digo
     
     list<Cidade> cidades;
@@ -403,7 +395,7 @@ int main(){
             switch (decisao)        //Switch que controla a entrada desejada do usu�rio.
         {
         case 0:                 //Encerrando o programa
-            cout << "\nPok�dex desligando... Pika Pika :(\n" << endl;
+            cout << "\nPokedex desligando... Pika Pika :(\n" << endl;
             return 0;
             
         case 1:                 //Cadastrar cidade
@@ -462,7 +454,7 @@ int main(){
     		break;
         
 		default:     
-            cout << "Op��o inv�lida, Jovem Treinador! " << endl;
+            cout << "Opcao invalida, Jovem Treinador! " << endl;
             break;
         }
 
