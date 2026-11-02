@@ -26,6 +26,18 @@ struct Aresta
 	int origem, destino, peso;
 };
 
+struct pokemons{
+    int numero, localx, localy;
+    string nome;
+    string tipo;
+};
+
+struct node{
+    pokemons data;
+    struct node * left;
+    struct node * right;
+};
+
 void limparCin()
 {
     cin.clear();
@@ -36,34 +48,27 @@ int verificacao(string decisao)
 {
 	int opcao = 0;
 	getline(cin >> ws, decisao);
-	
     
     bool valido = true;
     
-    if(decisao.empty())
-    {
+    if(decisao.empty()){
         valido = false;
     }
 
-    for(int i = 0; i < decisao.length(); i++)
-    {
-        if(decisao[i] < '0' || decisao[i] > '9')
-        {
+    for(int i = 0; i < decisao.length(); i++){
+        if(decisao[i] < '0' || decisao[i] > '9'){
             valido = false;
         }
     }
 
-    if(valido)
-    {
+    if(valido){
         opcao = 0;
 
-        for(int i = 0; i < decisao.length(); i++)
-        {
+        for(int i = 0; i < decisao.length(); i++){
             opcao = opcao * 10 + (decisao[i] - '0');
         }
 
-        if(opcao > 11)
-        {
+        if(opcao > 11){
             valido = false;
         }
     }
@@ -74,7 +79,54 @@ int verificacao(string decisao)
 	return opcao;
 	
 }
-  
+
+void insert(node * & current, pokemons data){ 
+  if(current == NULL){ 
+    current = new node; 
+    current->data = data; 
+    current->left = NULL; 
+    current->right = NULL; 
+  } else if(data.nome < current->data.nome){ 
+    insert(current->left, data); 
+  } else { 
+    insert(current->right, data); 
+  } 
+}
+
+node * find_less_save_right(node * & current) {
+  if(current->left != NULL) {
+    return find_less_save_right(current->left);
+  } else {
+    node * copy = current;
+    current = current->right;
+    return copy;
+  }
+}
+
+bool remove(node * & current, string data){
+  if(current == NULL){
+    return false;
+  } else if(data == current->data.nome){
+    node * temp = current;
+    
+    if (current->right == NULL) {
+      current = current->left;
+    } else if (current->left == NULL) {
+      current = current->right;
+    } else {
+      temp = find_less_save_right(current->right);
+      current->data = temp->data;
+    }
+    delete(temp);
+    return true;
+  } else {
+    if(data < current->data.nome){
+      return remove(current->left, data);
+    } else {
+      return remove(current->right, data);
+    }
+  }
+}
 
 int menu(){                 //Exibe o menu da pokedex
     string decisao;
@@ -161,8 +213,7 @@ void CadastrarCidade(list<Cidade>& cidades, int& vertices)
 
 void CadastrarEstrada(list<Aresta> grafo[], int vertices)
 {
-	if(vertices <= 1)
-	{
+	if(vertices <= 1){
 		cout << "Nao ha cidades o suficiente para uma estrada ser criada!" << endl;
 		return;
 	}
@@ -173,8 +224,7 @@ void CadastrarEstrada(list<Aresta> grafo[], int vertices)
     cout << "Insira o codigo da cidade de origem: ";
     cin >> origem;
 
-    while(cin.fail() || origem < 1 || origem > vertices)
-    {
+    while(cin.fail() || origem < 1 || origem > vertices){
         limparCin();
         cout << "Codigo de cidade inexistente. Tente novamente: " << endl;
         cin >> origem;
@@ -183,8 +233,7 @@ void CadastrarEstrada(list<Aresta> grafo[], int vertices)
     cout << "Insira o codigo da cidade de destino: ";
     cin >> destino;
 
-    while(cin.fail() || destino < 1 || destino > vertices || destino == origem)
-    {
+    while(cin.fail() || destino < 1 || destino > vertices || destino == origem){
         limparCin();
 
         if(destino == origem)
@@ -202,8 +251,7 @@ void CadastrarEstrada(list<Aresta> grafo[], int vertices)
     cout << "Distancia da estrada: ";
     cin >> peso;
 
-    while(cin.fail() || peso <= 0)
-    {
+    while(cin.fail() || peso <= 0){
         limparCin();
         cout << "Insira a distancia correta da estrada: ";
         cin >> peso;
@@ -268,7 +316,7 @@ void ListarEstradas(list<Cidade> cidades, list<Aresta> grafo[])
             {
                 // ve se o c�digo da cidade de destino � igual ao destino da estrada
                 if(destino -> codigo == it -> destino + 1)
-                    cout << cidade -> nome << " -> " << destino -> nome << " | Dist�ncia: " << it -> peso << endl;
+                    cout << cidade -> nome << " -> " << destino -> nome << " | Distancia: " << it -> peso << endl;
             }
         }
     }
@@ -276,15 +324,13 @@ void ListarEstradas(list<Cidade> cidades, list<Aresta> grafo[])
     cout << endl;
 }
 
-int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades, int origemCodigo)
-{
+int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades, int origemCodigo){
     string nomeCidade[100];
     bool temCentro[100];
 
     // Monta arrays auxiliares indexados por codigo-1, percorrendo a list uma vez
     list<Cidade>::iterator itc;
-    for(itc = cidades.begin(); itc != cidades.end(); itc++)
-    {
+    for(itc = cidades.begin(); itc != cidades.end(); itc++){
         int idx = itc->codigo - 1;
         nomeCidade[idx] = itc->nome;
         temCentro[idx] = itc->centro;
@@ -292,8 +338,7 @@ int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades,
 
     int origem = origemCodigo - 1; // converte c�digo digitado -> �ndice
 
-    if(origem < 0 || origem >= totalcidades)
-    {
+    if(origem < 0 || origem >= totalcidades){
         cout << "Codigo de cidade invalido!" << endl;
         return -1;
     }
@@ -312,7 +357,6 @@ int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades,
     distancia[origem] = 0;
 
     while(true){
-
         int atual = -1;
         int menor = INF;
 
@@ -328,8 +372,7 @@ int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades,
 
         visitado[atual] = true;
 
-        for(it = grafo[atual].begin(); it != grafo[atual].end(); ++it)
-        {
+        for(it = grafo[atual].begin(); it != grafo[atual].end(); ++it){
             int destino = it->destino;
             int peso = it->peso;
 
@@ -344,8 +387,7 @@ int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades,
     int menordistancia = INF;
 
     for(int i = 0; i < totalcidades; i++){
-        if(temCentro[i] && distancia[i] < menordistancia)
-        {
+        if(temCentro[i] && distancia[i] < menordistancia){
             menordistancia = distancia[i];
             melhorcidade = i;
         }
@@ -377,15 +419,80 @@ int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades,
     return melhorcidade;
 }
 
+void CadastrarPokemon(node * & current){
+    pokemons poke;
+
+    cout << "Para o cadastro dos Pokemons, antes precisaremos de algumas info" << endl;
+
+    cout << endl;
+
+    cout << "Qual o nome do pokemon?" << endl;
+    getline(cin >> ws, poke.nome);
+
+    cout << endl;
+
+    cout << "Qual seu tipo?" << endl;
+    getline(cin >> ws, poke.tipo);
+
+    cout << endl;
+
+    cout << "Qual o numero do pokemon?" << endl;
+    cin >> poke.numero;
+
+    cout << endl;
+
+    cout << "Qual a localizacao do pokemon? (X,Y)" << endl;
+    cin >> poke.localx >> poke.localy;
+
+    insert(current, poke);
+}
+
+void ListarPokemonsNome(node * & current){
+    if(current != NULL){
+        if(current->left != NULL){
+            ListarPokemonsNome(current->left);
+        }
+
+        cout << endl;
+        cout << "Nome: " << current->data.nome << endl;
+        cout << "Tipo: " << current->data.tipo << endl;
+        cout << "Numero: " << current->data.numero << endl;
+        cout << "Localizacao: (" << current->data.localx << "," << current->data.localy << ")" << endl;
+        cout << endl;
+
+        if(current->right != NULL){
+            ListarPokemonsNome(current->right);
+        }
+
+    }
+}
+
+void RemoverPokemon(node * & current){
+    bool removido = false;
+    pokemons pokemon;
+
+    cout << endl;
+    cout << "Digite o nome do pokemon para ser removido: " << endl;
+    getline(cin >> ws, pokemon.nome);
+
+    removido = remove(current, pokemon.nome);
+
+    if(removido)
+        cout << "Pokemon removido com sucesso!" << endl;
+    else
+        cout << "Pokemon nao encontrado para remocao!" << endl;
+
+    cout << endl;
+    
+
+}
+
 int main(){    
     //Come�o do c�digo
-    
-    list<Cidade> cidades;
-    
-    int vertices = 0;
-
+    node * root = NULL;
+    list<Cidade> cidades; 
     list<Aresta> grafo[100];
-    
+    int vertices = 0;
     int decisao = -1;
 
     while(decisao != 0){
@@ -422,15 +529,15 @@ int main(){
             break;
         
         case 4:                 //Cadastrar pokemon
-            onConstruct();
+            CadastrarPokemon(root);
             break;
         
         case 5:                 //Remover pokemon
-            onConstruct();
+            RemoverPokemon(root);
             break;
         
 		case 6:                 //Listar pokes por ordem alfabetica do nome
-            onConstruct();
+            ListarPokemonsNome(root);
             break;
         
 		case 7:                 //Listar pokes por ordem alfabetica por tipo
