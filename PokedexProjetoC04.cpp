@@ -407,6 +407,37 @@ int CentroProximo(list<Aresta> grafo[], list<Cidade>& cidades, int totalcidades,
     return melhorcidade;
 }
 
+//Verificamos os nomes atraves da arvore ja estar ordenada por nome
+bool verificarNomePoke(node * current, string nome){
+    if(current == NULL) //Verifica se o atual é nulo
+        return false;
+
+    if(nome == current->data.nome) //Verifica se o nome bate com o no atual
+        return true;
+    
+    if(nome < current->data.nome) //Caso seja menor, passamos para o proximo no
+        return verificarNomePoke(current->left, nome);
+    
+    //Dps de percorrer todo o no da esquerda, vamos em busca pelo no da direita
+    return verificarNomePoke(current->right, nome);
+}
+
+//Aq os numeros estao espalhados, entao temos que percorrer a arvore todas ate achar
+bool verificarNumeroPoke(node * current, int num){
+    if(current == NULL)
+        return false;
+
+    if(current->data.numero == num) //verifica se o no atual bate com o num
+        return true;
+
+    //chama a func recusrivamente passando o no na esquerda que verifica se o valor bate tbm
+    if(verificarNumeroPoke(current->left, num))
+        return true;          
+
+    //faz a mesma coisa porem pros nos da direita
+    return verificarNumeroPoke(current->right, num);
+}
+
 void CadastrarPokemon(node * & current){
     pokemons poke;
 
@@ -414,8 +445,17 @@ void CadastrarPokemon(node * & current){
 
     cout << endl;
 
-    cout << "Qual o nome do pokemon?" << endl;
-    getline(cin >> ws, poke.nome);
+    while(true){
+        cout << "Qual o nome do pokemon?" << endl;
+        getline(cin >> ws, poke.nome);
+
+        //enquanto nao encontrar o nome, fica em loop, se achar sai do while
+        if(!verificarNomePoke(current, poke.nome))
+            break;
+        
+        cout << "Pokemon ja cadastrado! Tente outro porfavor: " << endl;
+    }
+    
 
     cout << endl;
 
@@ -427,12 +467,28 @@ void CadastrarPokemon(node * & current){
     cout << "Qual o numero do pokemon?" << endl;
     cin >> poke.numero;
 
+    //verifica se o numero do pokemon existe e verifica a entrada do usuario tbm
+    //esse while roda enquanto o usuario digitar errado e enquanto exisitir pokemon com o mesmo numero
+    while(cin.fail() || verificarNumeroPoke(current, poke.numero)){ 
+        if(cin.fail()){ //se ele digitou errado a gente limpa o buffer e imprime msg
+            limparCin();
+            cout << "Entrada invalida. Digite um valor correto: " << endl;
+        }else{  //se ele digitou certo porem ja existe poke com o numero digitado, ele retorna a msg
+            cout << "Ja existe um pokemon com esse numero, tente outro porfavor: " << endl;
+        }
+        //nova entrada
+        cin >> poke.numero;
+    }
+    
     cout << endl;
 
     cout << "Qual a localizacao do pokemon? (X,Y)" << endl;
     cin >> poke.localx >> poke.localy;
 
     insert(current, poke);
+
+    cout << endl;
+    cout << "Pokemon " << poke.nome << " cadastrado com sucesso!" << endl;
 }
 
 void ListarPokemonsNome(node * & current){
