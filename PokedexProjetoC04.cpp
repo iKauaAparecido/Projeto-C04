@@ -609,9 +609,11 @@ void ListarPokemonsNome(node * & current){
             ListarPokemonsNome(current->right);
         }
 
+    }else{
+        cout << "Nao ha pokemons cadastrados!" << endl;
     }
 
-    cout << "Nao ha pokemons cadastrados!" << endl;
+    
 }
 
 void RemoverPokemon(node * & current){
@@ -754,8 +756,6 @@ int main(){
             cout << "Opcao invalida, Jovem Treinador! " << endl;
             break;
         }
-
-        
 
     }
 
