@@ -36,6 +36,12 @@ struct node{
     struct node * right;
 };
 
+string tipos[18] = {
+    "Bug", "Dark", "Dragon", "Electric", "Fairy", "Fighting",
+    "Fire", "Flying", "Ghost", "Grass", "Ground", "Ice",
+    "Normal", "Poison", "Psychic", "Rock", "Steel", "Water"
+};
+
 //Limpa o estado de erro do cin, sem travar quando a entrada for quando colocar letras ou algum outro tipo de caractere
 void limparCin()
 {
@@ -80,7 +86,7 @@ int verificacao(string decisao){
 
 
 string decidirTipo(){
-    
+
     int decisao = 0;
 
     cout << endl;
@@ -207,7 +213,6 @@ void destruct(node * & current) {
     delete(current);
   }
 }
-
 
 //Exibe o menu da pokedex
 int menu(){                 
@@ -548,13 +553,17 @@ void CadastrarPokemon(node * & current){
     cout << "Qual o numero do pokemon?" << endl;
     cin >> poke.numero;
 
+
     //verifica se o numero do pokemon existe e verifica a entrada do usuario tbm
     //esse while roda enquanto o usuario digitar errado e enquanto exisitir pokemon com o mesmo numero
-    while(cin.fail() || verificarNumeroPoke(current, poke.numero)){ 
+    while(cin.fail() || poke.numero < 1 || verificarNumeroPoke(current, poke.numero)){ 
         if(cin.fail()){ //se ele digitou errado a gente limpa o buffer e imprime msg
             limparCin();
             cout << "Entrada invalida. Digite um valor correto: " << endl;
-        }else{  //se ele digitou certo porem ja existe poke com o numero digitado, ele retorna a msg
+        }else if(poke.numero < 1){
+            cout << "O numero tem que ser maior do que 0. Tente novamente: " << endl;
+        }
+        else{  //se ele digitou certo porem ja existe poke com o numero digitado, ele retorna a msg
             cout << "Ja existe um pokemon com esse numero, tente outro porfavor: " << endl;
         }
         //nova entrada
@@ -601,6 +610,8 @@ void ListarPokemonsNome(node * & current){
         }
 
     }
+
+    cout << "Nao ha pokemons cadastrados!" << endl;
 }
 
 void RemoverPokemon(node * & current){
@@ -620,6 +631,49 @@ void RemoverPokemon(node * & current){
 
     cout << endl;
     
+
+}
+
+void listarTipo(node * current, string tipo, bool & achou){
+    if(current == NULL) //verifica se nao tem child
+        return;
+
+    //chama recursivamente ate achar o no folha da esquerda
+    listarTipo(current->left, tipo, achou);
+
+    //se bater o tipo, vem subindo a arvore e imprimindo as info do poke do tipo
+    if(current->data.tipo == tipo){
+        cout << endl;
+
+        if(!achou){ // imprime o tipo do poke somente uma vez
+            cout << "=======" << tipo << "=======" << endl;
+            achou = true; 
+        }
+        cout << "Nome: " << current->data.nome << endl;
+        cout << "Numero: " << current->data.numero << endl;
+        cout << "Localizacao: (" << current->data.localx << "," << current->data.localy << ")" << endl;
+        
+        cout << endl;
+    }
+
+    listarTipo(current->right, tipo, achou);
+
+}
+
+void ListarPokemonTipo(node * root){
+    if(root == NULL){ //Se o no for null, entao nao tem nenhum poke cadastrado
+        cout << "Nenhum pokemon cadastrado :( " << endl;
+        return;
+    }
+
+    //For que percorre todos os tipos imprimindo todos os pokes de cada tipo e passa o tipo em 
+    //ordem alfabetica para a funçao listar os poke desse tipo
+    for(int i = 0; i < 18; i++){
+        bool achou = false;
+        listarTipo(root, tipos[i], achou);
+    }
+
+    cout << endl;
 
 }
 
@@ -677,7 +731,7 @@ int main(){
             break;
         
 		case 7:                 //Listar pokes por ordem alfabetica por tipo
-            onConstruct();
+            ListarPokemonTipo(root);
             break;
         
 		case 8:                 //Contar pokes de cada tipo
@@ -700,6 +754,8 @@ int main(){
             cout << "Opcao invalida, Jovem Treinador! " << endl;
             break;
         }
+
+        
 
     }
 
