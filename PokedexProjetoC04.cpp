@@ -648,7 +648,7 @@ void listarTipo(node * current, string tipo, bool & achou){
         cout << endl;
 
         if(!achou){ // imprime o tipo do poke somente uma vez
-            cout << "=======" << tipo << "=======" << endl;
+            cout << "======= " << tipo << " =======" << endl;
             achou = true; 
         }
         cout << "Nome: " << current->data.nome << endl;
