@@ -679,13 +679,31 @@ void ListarPokemonTipo(node * root){
 
 }
 
+void contarPokeTipo(node * & current, string tipo, int & contador){
+    if(current == NULL)
+        return;
+    
+    if(current->left != NULL){
+        contarPokeTipo(current->left, tipo, contador);
+    }
+
+    if(current->data.tipo == tipo)
+        contador++;
+    
+    if(current->right != NULL)
+        contarPokeTipo(current->right, tipo, contador);
+
+}
+
 int main(){    
     //Começo do codigo
     node * root = NULL;
     list<Cidade> cidades; 
     list<Aresta> grafo[100];
+    string tipo;
     int vertices = 0;
     int decisao = -1;
+    int contador = 0;
 
     while(decisao != 0){
 
@@ -737,7 +755,16 @@ int main(){
             break;
         
 		case 8:                 //Contar pokes de cada tipo
-            onConstruct();
+            cout << "Qual tipo de pokemon voce quer contar? " << endl;
+
+            contador = 0; //zera o contador
+
+            tipo = decidirTipo();
+
+            contarPokeTipo(root, tipo, contador);
+
+            cout << "Ha " << contador << " pokemons do tipo " << tipo << "!" << endl;
+            
             break;
         
 		case 9:                 //Encontrar pokes proximos
