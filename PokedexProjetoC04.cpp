@@ -78,8 +78,76 @@ int verificacao(string decisao){
 	
 }
 
-//insert, find_less_save_right e remove sao as funçoes dada pelo professor Jonas que a gente usou para adptar no projeto
 
+string decidirTipo(){
+    
+    int decisao = 0;
+
+    cout << endl;
+
+    cout << "====================== Lista de Tipos ======================" << endl;
+
+    cout << "[1] Bug" << endl;
+    cout << "[2] Dark" << endl;
+    cout << "[3] Dragon" << endl;
+    cout << "[4] Electric" << endl;
+    cout << "[5] Fairy" << endl;
+    cout << "[6] Fighting" << endl;
+    cout << "[7] Fire" << endl;
+    cout << "[8] Flying" << endl;
+    cout << "[9] Ghost" << endl;
+    cout << "[10] Grass" << endl;
+    cout << "[11] Ground" << endl;
+    cout << "[12] Ice" << endl;
+    cout << "[13] Normal" << endl;
+    cout << "[14] Poison" << endl;
+    cout << "[15] Psychic" << endl;
+    cout << "[16] Rock" << endl;
+    cout << "[17] Steel" << endl;
+    cout << "[18] Water" << endl;
+    cout << "============================================================" << endl;
+    cout << endl;
+
+    cout << "Digite sua opcao: " << endl;
+
+    cin >> decisao;
+
+    while(cin.fail() || decisao < 1 || decisao > 18){ 
+        if(cin.fail()){ //se ele digitou errado a gente limpa o buffer e imprime msg
+            limparCin();
+            cout << "Entrada invalida. Digite um valor correto: " << endl;
+        }else{
+            cout << "Entrada fora dos valores permitidos. Tente novamente: " << endl;
+        }
+        //nova entrada
+        cin >> decisao;
+    }
+
+    switch (decisao){
+        case 1:  return "Bug";
+        case 2:  return "Dark";
+        case 3:  return "Dragon";
+        case 4:  return "Electric";
+        case 5:  return "Fairy";
+        case 6:  return "Fighting";
+        case 7:  return "Fire";
+        case 8:  return "Flying";
+        case 9:  return "Ghost";
+        case 10: return "Grass";
+        case 11: return "Ground";
+        case 12: return "Ice";
+        case 13: return "Normal";
+        case 14: return "Poison";
+        case 15: return "Psychic";
+        case 16: return "Rock";
+        case 17: return "Steel";
+        case 18: return "Water";
+        default: break;
+    }
+
+    return "";
+}
+//insert, find_less_save_right e remove sao as funçoes dada pelo professor Jonas que a gente usou para adptar no projeto
 void insert(node * & current, pokemons data){ 
   if(current == NULL){ 
     current = new node; 
@@ -127,6 +195,19 @@ bool remove(node * & current, string data){
     }
   }
 }
+
+void destruct(node * & current) {
+  if (current != NULL) {
+    if (current->left != NULL) {
+      destruct(current->left);
+    }
+    if (current->right != NULL) {
+      destruct(current->right);
+    }
+    delete(current);
+  }
+}
+
 
 //Exibe o menu da pokedex
 int menu(){                 
@@ -460,7 +541,7 @@ void CadastrarPokemon(node * & current){
     cout << endl;
 
     cout << "Qual seu tipo?" << endl;
-    getline(cin >> ws, poke.tipo);
+    poke.tipo = decidirTipo();
 
     cout << endl;
 
@@ -484,6 +565,17 @@ void CadastrarPokemon(node * & current){
 
     cout << "Qual a localizacao do pokemon? (X,Y)" << endl;
     cin >> poke.localx >> poke.localy;
+
+    while(cin.fail()){
+        if(cin.fail()){
+            limparCin();
+            cout << "Entrada Invalida. Digite um valor correto!" << endl;
+        }
+
+        cout << endl;
+        cout << "Qual a localizacao do pokemon? (X,Y)" << endl;
+        cin >> poke.localx >> poke.localy;
+    }
 
     insert(current, poke);
 
@@ -543,7 +635,7 @@ int main(){
 
         decisao = menu();
 
-            switch (decisao)        //Switch que controla a entrada desejada do usu�rio.
+            switch (decisao)        //Switch que controla a entrada desejada do usuario.
         {
         case 0:                 //Encerrando o programa
             cout << "\nPokedex desligando... Pika Pika :(\n" << endl;
@@ -610,6 +702,9 @@ int main(){
         }
 
     }
+
+    //liberando a memoria
+    destruct(root);
 
     return 0;
 }
