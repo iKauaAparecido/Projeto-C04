@@ -36,11 +36,6 @@ struct node{
     struct node * right;
 };
 
-string tipos[18] = {
-    "Bug", "Dark", "Dragon", "Electric", "Fairy", "Fighting",
-    "Fire", "Flying", "Ghost", "Grass", "Ground", "Ice",
-    "Normal", "Poison", "Psychic", "Rock", "Steel", "Water"
-};
 
 //Limpa o estado de erro do cin, sem travar quando a entrada for quando colocar letras ou algum outro tipo de caractere
 void limparCin()
@@ -153,7 +148,7 @@ string decidirTipo(){
 
     return "";
 }
-//insert, find_less_save_right e remove sao as funçoes dada pelo professor Jonas que a gente usou para adptar no projeto
+//insert, find_less_save_right, remove, destruct e show_in_order sao as funçoes dada pelo professor Jonas que a gente usou para adptar no projeto
 void insert(node * & current, pokemons data){ 
   if(current == NULL){ 
     current = new node; 
@@ -164,6 +159,19 @@ void insert(node * & current, pokemons data){
     insert(current->left, data); 
   } else { 
     insert(current->right, data); 
+  } 
+}
+
+void insertTipo(node * & current, pokemons data){ 
+  if(current == NULL){ 
+    current = new node; 
+    current->data = data; 
+    current->left = NULL; 
+    current->right = NULL; 
+  } else if(data.tipo < current->data.tipo){ 
+    insertTipo(current->left, data); 
+  } else { 
+    insertTipo(current->right, data); 
   } 
 }
 
@@ -201,6 +209,52 @@ bool remove(node * & current, string data){
     }
   }
 }
+
+bool removeTipo(node * & current, string nome){
+    if(current == NULL)
+        return false;
+    if(current->data.nome == nome){
+        node * temp = current;
+        if(current->right == NULL)
+            current = current->left;
+        else if(current->left == NULL)
+            current = current->right;
+        else{
+            temp = find_less_save_right(current->right);
+            current->data = temp->data;
+        }
+        delete (temp);
+        return true;
+    }
+    if(removeTipo(current->left, nome))
+        return true;
+
+    return removeTipo(current->right, nome);
+}
+
+void show_in_order(node * current, string & tipoAnterior) {
+  if (current != NULL) {
+
+    if (current->left != NULL) {
+      show_in_order(current->left, tipoAnterior);
+    }
+
+    //apenas pra mostrar o cabeçario do tipo
+    if(current->data.tipo != tipoAnterior){
+        cout << "====== " << current->data.tipo << " ======" << endl;
+        tipoAnterior = current->data.tipo;
+    }
+    
+    cout << "Nome: "<< current->data.nome << endl;
+    cout << "Numero: "<< current->data.numero << endl;
+    cout << "Localizacao: ("<< current->data.localx << "," << current->data.localy << ")" << endl << endl;  
+
+    if (current->right != NULL) {
+      show_in_order(current->right, tipoAnterior);
+    }
+  }
+}
+
 
 void destruct(node * & current) {
   if (current != NULL) {
@@ -524,7 +578,7 @@ bool verificarNumeroPoke(node * current, int num){
     return verificarNumeroPoke(current->right, num);
 }
 
-void CadastrarPokemon(node * & current){
+void CadastrarPokemon(node * & current, node * & rootTipo){
     pokemons poke;
 
     cout << "Para o cadastro dos Pokemons, antes precisaremos de algumas info" << endl;
@@ -587,15 +641,25 @@ void CadastrarPokemon(node * & current){
     }
 
     insert(current, poke);
+    insertTipo(rootTipo, poke);
 
     cout << endl;
     cout << "Pokemon " << poke.nome << " cadastrado com sucesso!" << endl;
 }
 
-void ListarPokemonsNome(node * & current){
+void ListarPokemonsNome(node * & current, char & letra){
     if(current != NULL){
         if(current->left != NULL){
-            ListarPokemonsNome(current->left);
+            ListarPokemonsNome(current->left, letra);
+        }
+
+        //apenas pra exibir o cabeçario da letra
+        char inicial = toupper(current->data.nome[0]);
+
+        if(inicial != letra){
+            cout << endl;
+            cout << "======== " << inicial << " ========" << endl;
+            letra = inicial;
         }
 
         cout << endl;
@@ -606,7 +670,7 @@ void ListarPokemonsNome(node * & current){
         cout << endl;
 
         if(current->right != NULL){
-            ListarPokemonsNome(current->right);
+            ListarPokemonsNome(current->right, letra);
         }
 
     }else{
@@ -616,8 +680,9 @@ void ListarPokemonsNome(node * & current){
     
 }
 
-void RemoverPokemon(node * & current){
+void RemoverPokemon(node * & current, node * & rootTipo){
     bool removido = false;
+    bool removidoTipo = false;
     pokemons pokemon;
 
     cout << endl;
@@ -625,8 +690,9 @@ void RemoverPokemon(node * & current){
     getline(cin >> ws, pokemon.nome);
 
     removido = remove(current, pokemon.nome);
+    removidoTipo = removeTipo(rootTipo, pokemon.nome);
 
-    if(removido)
+    if(removido && removidoTipo)
         cout << "Pokemon removido com sucesso!" << endl;
     else
         cout << "Pokemon nao encontrado para remocao!" << endl;
@@ -636,47 +702,15 @@ void RemoverPokemon(node * & current){
 
 }
 
-void listarTipo(node * current, string tipo, bool & achou){
-    if(current == NULL) //verifica se nao tem child
-        return;
+void ListarPokemonsTipo(node * current){
+    if(current == NULL){
+        cout << "Nao ha pokemons cadastrados!" << endl; 
+    }else{
+        string tipoAnterior = "";
 
-    //chama recursivamente ate achar o no folha da esquerda
-    listarTipo(current->left, tipo, achou);
-
-    //se bater o tipo, vem subindo a arvore e imprimindo as info do poke do tipo
-    if(current->data.tipo == tipo){
-        cout << endl;
-
-        if(!achou){ // imprime o tipo do poke somente uma vez
-            cout << "======= " << tipo << " =======" << endl;
-            achou = true; 
-        }
-        cout << "Nome: " << current->data.nome << endl;
-        cout << "Numero: " << current->data.numero << endl;
-        cout << "Localizacao: (" << current->data.localx << "," << current->data.localy << ")" << endl;
-        
-        cout << endl;
+        show_in_order(current, tipoAnterior);
     }
-
-    listarTipo(current->right, tipo, achou);
-
-}
-
-void ListarPokemonTipo(node * root){
-    if(root == NULL){ //Se o no for null, entao nao tem nenhum poke cadastrado
-        cout << "Nenhum pokemon cadastrado :( " << endl;
-        return;
-    }
-
-    //For que percorre todos os tipos imprimindo todos os pokes de cada tipo e passa o tipo em 
-    //ordem alfabetica para a funçao listar os poke desse tipo
-    for(int i = 0; i < 18; i++){
-        bool achou = false;
-        listarTipo(root, tipos[i], achou);
-    }
-
-    cout << endl;
-
+    
 }
 
 void contarPokeTipo(node * & current, string tipo, int & contador){
@@ -698,12 +732,14 @@ void contarPokeTipo(node * & current, string tipo, int & contador){
 int main(){    
     //Começo do codigo
     node * root = NULL;
+    node * root_ABB_Tipo = NULL;
     list<Cidade> cidades; 
     list<Aresta> grafo[100];
     string tipo;
     int vertices = 0;
     int decisao = -1;
     int contador = 0;
+    char letra = 'A';
 
     while(decisao != 0){
 
@@ -713,7 +749,7 @@ int main(){
         {
         case 0:                 //Encerrando o programa
             cout << "\nPokedex desligando... Pika Pika :(\n" << endl;
-            return 0;
+            break;
             
         case 1:                 //Cadastrar cidade
             CadastrarCidade(cidades, vertices);     
@@ -739,19 +775,20 @@ int main(){
             break;
         
         case 4:                 //Cadastrar pokemon
-            CadastrarPokemon(root);
+            CadastrarPokemon(root, root_ABB_Tipo);
             break;
         
         case 5:                 //Remover pokemon
-            RemoverPokemon(root);
+            RemoverPokemon(root, root_ABB_Tipo);
             break;
         
 		case 6:                 //Listar pokes por ordem alfabetica do nome
-            ListarPokemonsNome(root);
+            
+            ListarPokemonsNome(root, letra);
             break;
         
 		case 7:                 //Listar pokes por ordem alfabetica por tipo
-            ListarPokemonTipo(root);
+            ListarPokemonsTipo(root_ABB_Tipo);
             break;
         
 		case 8:                 //Contar pokes de cada tipo
@@ -788,6 +825,7 @@ int main(){
 
     //liberando a memoria
     destruct(root);
+    destruct(root_ABB_Tipo);
 
     return 0;
 }
