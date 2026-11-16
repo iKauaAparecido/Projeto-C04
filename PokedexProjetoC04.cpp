@@ -12,6 +12,7 @@
 #include <iostream> 
 #include <list>
 #include <string>
+#include <cmath>
 using namespace std;
 
 struct Cidade{
@@ -38,8 +39,7 @@ struct node{
 
 
 //Limpa o estado de erro do cin, sem travar quando a entrada for quando colocar letras ou algum outro tipo de caractere
-void limparCin()
-{
+void limparCin(){
     cin.clear();
     cin.ignore(100, '\n');
 }
@@ -294,10 +294,6 @@ int menu(){
     cout << endl;
 
     return verificacao(decisao); 
-}
-
-void onConstruct(){
-    cout << "Funcionalidade em Construçao... \n" << endl;
 }
 
 void CadastrarCidade(list<Cidade>& cidades, int& vertices){		
@@ -729,6 +725,34 @@ void contarPokeTipo(node * & current, string tipo, int & contador){
 
 }
 
+void encontrarPokemonsProximos(node * current, int x, int y, int raio, int & encontrados){
+    if(current == NULL)
+        return;
+
+    //recrusivamente ate o no folha da esq
+    encontrarPokemonsProximos(current->left, x, y, raio, encontrados);
+
+    //diferença entre os pontos passado pelo usuario e o do poke
+    int dx = current->data.localx - x;
+    int dy = current->data.localy - y;
+
+    //calcula a distancia
+    double distancia = sqrt((dx * dx) + (dy * dy));
+
+    //verifica se esta por perto ou nao e exibe suas info
+    if(distancia <= raio){
+        cout << endl;
+        cout << "Nome: " << current->data.nome << endl;
+        cout << "Tipo: " << current->data.tipo << endl;
+        cout << "Numero: " << current->data.numero << endl;
+        cout << "Localizacao: (" << current->data.localx << "," << current->data.localy << ")" << endl;
+        encontrados++; //incrementa a quantidade de poke por perto
+    }
+
+    //recrusivamente ate o no folha da dir
+    encontrarPokemonsProximos(current->right, x, y, raio, encontrados);
+}
+
 int main(){    
     //Começo do codigo
     node * root = NULL;
@@ -740,6 +764,7 @@ int main(){
     int decisao = -1;
     int contador = 0;
     char letra = 'A';
+    int encontrados = 0;
 
     while(decisao != 0){
 
@@ -805,7 +830,28 @@ int main(){
             break;
         
 		case 9:                 //Encontrar pokes proximos
-            onConstruct();
+            int x, y;
+
+            cout << "Qual a sua localizacao? (X,Y)" << endl;
+            cin >> x >> y;
+
+            while(cin.fail()){
+                limparCin();
+                cout << "Entrada invalida. Digite a localizacao novamente (X,Y): " << endl;
+                cin >> x >> y;
+            }
+
+            encontrados = 0; //zeramos os poke encontrados
+
+            cout << "===== Pokemons em um raio de 100m =====" << endl;
+
+            encontrarPokemonsProximos(root, x, y, 100, encontrados);
+
+            if(encontrados == 0)
+                cout << "Nenhum pokemon encontrado por perto..." << endl;
+            else
+                cout << "Total de pokemons encontrados por perto: " << encontrados << endl;
+
             break;
         
 		case 10:
